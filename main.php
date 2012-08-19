@@ -9,15 +9,15 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <link type="text/css" rel="stylesheet" href="styles/common.css" />
         <link type="text/css" rel="stylesheet" href="styles/login.css" />
         <script type="text/javascript" charset="utf-8">
-        	function redirectToJoin () {
-        		window.location = "join.php";
+        	function redirectToLogout () {
+        		window.location = "logout.php";
         	}
         </script>
     </head>
     <body>
         <div class="wrapper">
         	<div class="center title">
-        		Login
+        		<?PHP echo $_SESSION['id']."님 로그인을 환영합니다."; ?>
         	</div>
             <form accept-charset="UTF-8" action="login_check.php" class="simple_form user" id="user_new" method="post">
                 <div class="block center login small">
@@ -31,8 +31,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                             <input class="password required" id="user_password" name="password" required="required" size="30" type="password" />
                         </div>
                         
-                        <input class="half-width-button" id="user_login" name="login" type="submit" value="Login!">
-                        <input class="half-width-button" id="user_join" name="join" type="button" value="Join!" onclick="redirectToJoin();">
+                        <input class="half-width-button" id="user_logout" name="logout" type="button" value="Logout!" onclick="redirectToLogout();">
                     </div>
                 </div>
             </form>

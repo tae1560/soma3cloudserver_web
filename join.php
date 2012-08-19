@@ -17,9 +17,9 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     <body>
         <div class="wrapper">
         	<div class="center title">
-        		Login
+        		회원가입
         	</div>
-            <form accept-charset="UTF-8" action="login_check.php" class="simple_form user" id="user_new" method="post">
+            <form accept-charset="UTF-8" action="join_check.php" class="simple_form user" id="user_new" method="post">
                 <div class="block center login small">
                     <div class="block_content">
                         <div class="input string id required">
@@ -30,9 +30,8 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                             <label class="password required" for="user_password">Password</label>
                             <input class="password required" id="user_password" name="password" required="required" size="30" type="password" />
                         </div>
-                        
-                        <input class="half-width-button" id="user_login" name="login" type="submit" value="Login!">
-                        <input class="half-width-button" id="user_join" name="join" type="button" value="Join!" onclick="redirectToJoin();">
+                       
+                        <input class="half-width-button" id="user_join" name="join" type="submit" value="Join!">
                     </div>
                 </div>
             </form>
