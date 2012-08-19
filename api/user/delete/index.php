@@ -84,8 +84,11 @@ function removeUser($id) {
 function process(&$returnValue) {
 	global $configure;
 
+	// get arguments
+	getArguments($id, $token);
+	
 	// invalid argument block
-	if (validArguments($id) == false) {
+	if (validArguments($id, $token) == false) {
 		$returnValue['result'] = $configure['results']['invalid_argument']['message'];
 		$returnValue['result_code'] = $configure['results']['invalid_argument']['code'];
 		return;

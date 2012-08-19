@@ -39,7 +39,6 @@ include_once $configure['dbconn_path'];
 function getArguments(&$id, &$token) {
 	$id = $_POST['id'];
 	$token = $_POST['token'];
-
 	// DEBUG : using get for test
 	//$id = $_GET['id'];
 	//$token = $_GET['token'];
@@ -63,9 +62,12 @@ function removeSession($id) {
 // args : reference of variable for return with json
 function process(&$returnValue) {
 	global $configure;
-
+	
+	// get arguments
+	getArguments($id, $token);
+	
 	// invalid argument block
-	if (validArguments($id) == false) {
+	if (validArguments($id, $token) == false) {
 		$returnValue['result'] = $configure['results']['invalid_argument']['message'];
 		$returnValue['result_code'] = $configure['results']['invalid_argument']['code'];
 		return;
