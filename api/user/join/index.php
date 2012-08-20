@@ -82,7 +82,7 @@ function addUserInformation($id, $hashedPassword) {
 		$query = "INSERT INTO " . $configure['user_information_table_name'] . " VALUES (NULL, '$id', '$hashedPassword', default);";
 		$result = mysql_query($query);
 		if (!$result) {
-			echo "질의 수행시 오류가 발생하였습니다.1".mysql_error();
+			echo "질의 수행시 오류가 발생하였습니다.1" . mysql_error();
 			exit ;
 		}
 
@@ -111,6 +111,14 @@ function process(&$returnValue) {
 
 	// check if id and password is val
 	if (addUserInformation($id, $hashedPassword) == true) {
+		// make root directory
+		$filename = $configure['storage_dir'] . $id;
+
+		if (!file_exists($filename)) {
+			// 폴더가 없으면 폴더 생성
+			mkdir($filename, 0777);
+		}
+
 		$returnValue['result'] = $configure['results']['success']['message'];
 		$returnValue['result_code'] = $configure['results']['success']['code'];
 	} else {
