@@ -20,6 +20,9 @@ $configure['results']['success']['code'] = 200;
 $configure['results']['failed_authentication']['message'] = "Failed to authenticate";
 $configure['results']['failed_authentication']['code'] = 401;
 
+$configure['results']['not_found']['message'] = "Not Found";
+$configure['results']['not_found']['code'] = 404;
+
 $configure['results']['conflict']['message'] = "Conflict occured";
 $configure['results']['conflict']['code'] = 409;
 
