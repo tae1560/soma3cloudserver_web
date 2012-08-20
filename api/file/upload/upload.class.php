@@ -413,7 +413,7 @@ class UploadHandler
         } else {
             header('Content-type: text/plain');
         }
-        echo $json;
+        //echo $json;
     }
 
     public function delete() {

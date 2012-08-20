@@ -23,9 +23,9 @@ function getArguments(&$id, &$token, &$folderpath) {
 	$folderpath = $_POST['folderpath'];
 
 	// DEBUG : using get for test
-	$id = $_GET['id'];
-	$token = $_GET['token'];
-	$folderpath = $_GET['folderpath'];
+	//$id = $_GET['id'];
+	//$token = $_GET['token'];
+	//$folderpath = $_GET['folderpath'];
 }
 
 // args : inputed parameters
@@ -65,7 +65,11 @@ function process() {
 
 	// get list from folder
 	$filename = $configure['storage_dir'] . $id . "/" . $path;
-	
+
+	if (!file_exists($filename)) {
+		// 폴더가 없으면 폴더 생성
+		mkdir($filename, 0777);
+	}	
 
 	if (file_exists($filename)) {
 		require ('upload.class.php');
@@ -119,7 +123,7 @@ function process() {
 
 		$returnValue['result'] = $configure['results']['success']['message'];
 		$returnValue['result_code'] = $configure['results']['success']['code'];
-		$returnValue['list'] = $list;
+		//$returnValue['list'] = $list;
 	} else {
 		// file is not exist
 		$returnValue['result'] = $configure['results']['not_found']['message'];
@@ -134,7 +138,7 @@ function main() {
 
 	// output return value
 	if ($returnValue) {
-		//output_result($returnValue);
+		output_result($returnValue);
 	}
 }
 
