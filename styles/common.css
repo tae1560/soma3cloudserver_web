@@ -8,6 +8,10 @@ body {
     display: block;
 }
 
+.left {
+    text-align: left;
+}
+
 .center {
     text-align: center;
 }
@@ -20,6 +24,9 @@ body {
     font-size: 3em;
     padding: 30px;
     color: gray;
+}
+
+div.center {
 }
 
 div.wrapper {
