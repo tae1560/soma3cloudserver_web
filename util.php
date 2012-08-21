@@ -32,15 +32,16 @@ function validate_session() {
 	}
 
 	$args = array('id' => $id, 'token' => $token);
-	$response = getResponstWithPost("/api/user/get_information/index.php?response_object=json", $args);
+	$response = getResponstWithPost("/api/file/get_information/index.php?response_object=json", $args);
 	$data = json_decode($response);
-
+	
 	// case별로 처리하기
 	switch ($data->result_code) {
 		case 401 :
 		// session timeout
-			$id = $_SESSION['id'] = 0;
-			$token = $_SESSION['token'] = 0;
+			messageWithAlert("세션 시간 초과로 로그아웃 됩니다.");
+			$_SESSION['id'] = null;
+			$_SESSION['token'] = null;
 			return false;
 	}
 

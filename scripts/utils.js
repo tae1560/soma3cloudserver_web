@@ -25,6 +25,14 @@ function post_to_url(path, params, method) {
     form.submit();
 }
 
+function basename(path) {
+    return path.replace(/\\/g,'/').replace( /.*\//, '' );
+}
+ 
+function dirname(path) {
+    return path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');;
+}
+
 ////////////////// ajax util start ////////////////////
 
 // ajax util function
