@@ -87,9 +87,8 @@ function process() {
 		// parameter
 		$options = array (
 			'upload_dir' => $filename,
-            'upload_url' => $getFullUrl.$id."/".$path
+            'upload_url' => $getFullUrl."/".$filename
 		);
-
 		$upload_handler = new UploadHandler($options);
 
 		header('Pragma: no-cache');
