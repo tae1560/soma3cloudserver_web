@@ -43,8 +43,13 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 			//console.log($('#fileupload :file'));
 
 			var formData = new FormData($('#fileupload')[0]);
+			//var formData = new FormData();
+			//formData.append("files", $("input[name='files[]']")[0].files);
 			formData.append("folderpath",current_path+"/");
-			//console.log(formData);
+			formData.append("id", session_id);
+			formData.append("token",session_token);
+			console.log(formData);
+			console.log(formData.toString());
 			$.ajax({
 				url : 'api/file/upload/index.php?response_object=json', //server script to process data
 				type : 'POST',
@@ -73,9 +78,20 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					//location.reload();
 					loadFileTableWithPath(current_path);
 				},
-				//error : errorHandler,
+				error : function(data){
+					console.log(data);
+					$('progress').hide();
+					//location.reload();
+					loadFileTableWithPath(current_path);
+				},
 				// Form data
 				data : formData,
+				// data : {
+					// formData : formData,
+					// id : session_id,
+					// token : session_token,
+					// folderpath: current_path + "/"
+				// },
 				//Options to tell JQuery not to process data or worry about content-type
 				cache : false,
 				contentType : false,
@@ -342,8 +358,6 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                     이 파일을 전송합니다:
                     <input type="file" name="files[]" multiple>
                     <input type="button" name="send" value="파일 전송" />
-                    <input type="hidden" name="id" value="<?PHP echo $_SESSION['id']; ?>" />
-                    <input type="hidden" name="token" value="<?PHP echo $_SESSION['token']; ?>" />
                     <progress></progress>
                 </div>
             </form>
