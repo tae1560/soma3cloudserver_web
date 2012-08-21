@@ -21,6 +21,11 @@ function get_list($id, $token) {
 	}
 }
 
+function get_list_session() {
+	session_start();
+	return get_list($_SESSION['id'], $_SESSION['token']);
+}
+
 function get_dir_list($id, $token) {
 	// args
 
@@ -44,6 +49,11 @@ function get_dir_list($id, $token) {
 		default :
 			return null;
 	}
+}
+
+function get_dir_list_session() {
+	session_start();
+	return get_dir_list($_SESSION['id'], $_SESSION['token']);
 }
 
 function downloadFile($id, $token, $path) {
