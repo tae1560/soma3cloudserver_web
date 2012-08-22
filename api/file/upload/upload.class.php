@@ -52,12 +52,12 @@ class UploadHandler
                     'jpeg_quality' => 95
                 ),
                 */
-                'thumbnail' => array(
-                    'upload_dir' => dirname($_SERVER['SCRIPT_FILENAME']).'/thumbnails/',
-                    'upload_url' => $this->getFullUrl().'/thumbnails/',
-                    'max_width' => 80,
-                    'max_height' => 80
-                )
+                // 'thumbnail' => array(
+                    // 'upload_dir' => dirname($_SERVER['SCRIPT_FILENAME']).'/thumbnails/',
+                    // 'upload_url' => $this->getFullUrl().'/thumbnails/',
+                    // 'max_width' => 80,
+                    // 'max_height' => 80
+                // )
             )
         );
         if ($options) {
