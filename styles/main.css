@@ -1,0 +1,41 @@
+div#folder_maker {
+    float: left;
+    width: 50%;
+}
+div#fileupload_div {
+    float: right;
+    width: 50%;
+}
+div#foldertree {
+    float: left;
+    width: 30%;
+    display: block; 
+}
+div#folder_content {
+    float: none;
+    /*width: 100%;*/
+    display: block; 
+}
+div#folder_content table {
+    float: none;
+    width: 100%;
+    display: block; 
+}
+div#folder_content table tr td, div#folder_content table thead th {
+    width: 10%;
+    border-bottom: 1px dashed lightblue;
+    border-left: 1px dashed lightblue;
+}
+div#logout {
+    float: none;
+}
+
+.width_wrapper {
+    width: 100%;
+    min-height: 50px;
+}
+
+.bordered {
+    border: 2px solid #4095DF;
+    min-height: 300px;
+}
