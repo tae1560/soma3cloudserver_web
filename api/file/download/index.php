@@ -80,13 +80,14 @@ function process() {
 	
 	// get list from folder
 	$filename = $configure['storage_dir'] . $id . "/" . $path;
+	$filebase = basename($path);
 
 	// file download start
 	//ob_start();
 
 	if (file_exists($filename) && filetype($filename) != "dir") {
 		header("Content-Type: application/octet-stream");
-		Header("Content-Disposition: attachment;; filename=$filepath");
+		Header("Content-Disposition: attachment;; filename=$filebase");
 		header("Content-Transfer-Encoding: binary");
 		Header("Content-Length: " . (string)(filesize($filename)));
 		Header("Cache-Control: cache, must-reval!idate");
