@@ -16,6 +16,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
         <link type="text/css" rel="stylesheet" href="styles/common.css" />
         <link type="text/css" rel="stylesheet" href="styles/login.css" />
+        <link type="text/css" rel="stylesheet" href="styles/main.css" />
         <script type="text/javascript" src="scripts/jquery-1.8.1.min.js"></script>
         <script type="text/javascript">
         	var session_id =<?PHP echo "\"" . $_SESSION['id'] . "\""; ?>;
@@ -43,13 +44,11 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 			//console.log($('#fileupload :file'));
 
 			var formData = new FormData($('#fileupload')[0]);
-			//var formData = new FormData();
-			//formData.append("files", $("input[name='files[]']")[0].files);
 			formData.append("folderpath",current_path+"/");
 			formData.append("id", session_id);
 			formData.append("token",session_token);
-			console.log(formData);
-			console.log(formData.toString());
+			//console.log(formData);
+			//console.log(formData.toString());
 			$.ajax({
 				url : 'api/file/upload/index.php?response_object=json', //server script to process data
 				type : 'POST',
@@ -73,13 +72,13 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					$('progress').show();
 				},
 				success : function(data) {
-					console.log(data);
+					//console.log(data);
 					$('progress').hide();
 					//location.reload();
 					loadFileTableWithPath(current_path);
 				},
 				error : function(data){
-					console.log(data);
+					console.log(data['responseText']);
 					$('progress').hide();
 					//location.reload();
 					loadFileTableWithPath(current_path);
@@ -181,6 +180,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		if (path) {
 			if ($("UL[path='"+path+"']")[0]) {
 				$("UL[path='"+path+"']").remove();
+				expandFolder(obj);
 			} else {
 				expandFolder(obj);
 			}
@@ -200,6 +200,9 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 
 	function loadFileTableWithPath(path) {
 		current_path = path;
+		current_path = current_path.replace("//","/");
+		if (current_path == "")current_path = "/";
+		$("#current_path_div").html(current_path);
 
 		$.ajax({
 			url : 'api/file/get_list/index.php?response_object=json', //server script to process data
@@ -257,7 +260,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 						if (list[i]['type'] !== "dir") {
 							var tr = $("<tr></tr>").appendTo(table);
 							$("<td>" + list[i]['name'] + "</td>").appendTo(tr).click(function() {
-								downloadFile(current_path + $(this).attr("filename"));
+								downloadFile(current_path + "/" + $(this).attr("filename"));
 							}).addClass("clickable").attr("filename", list[i]['name']);
 							$("<td>" + list[i]['type'] + "</td>").appendTo(tr);
 							$("<td>" + list[i]['size'] + "</td>").appendTo(tr);
@@ -270,6 +273,8 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 				}
 
 				table.appendTo($("#folder_content"));
+				
+				$('.width_wrapper').css("height", "auto");
 			},
 			//error : errorHandler,
 			// Form data
@@ -289,7 +294,6 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 
 			function downloadFile(path) {
 				// post_to_url(path, params, method)
-
 				post_to_url("api/file/download/", {
 					'id' : session_id,
 					'token' : session_token,
@@ -334,40 +338,53 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     </head>
     <body>
         <div class="wrapper">
-            <div class="center title">
-                <?PHP echo $_SESSION['id'] . "님 로그인을 환영합니다."; ?>
+        	<div class="block_content">
+	            <div class="center title">
+	                <?PHP echo $_SESSION['id'] . "님 로그인을 환영합니다."; ?>
+	            </div>
+				<div class="width_wrapper">
+					<div id="folder_maker" class="block">
+						새폴더 만들기 : 
+						<input type="text" name="foldername" />
+						<input type="button" name="make_folder" value="폴더 만들기" />
+					</div>
+					<div id="fileupload_div" class="center block">
+						<form id="fileupload" enctype="multipart/form-data" action="api/file/upload/" method="POST">
+		                <!-- input의 name은 $_FILES 배열의 name을 결정합니다 -->
+		                
+		                    파일 업로드 : 
+		                    <input type="file" name="files[]" multiple>
+		                    <input type="button" name="send" value="파일 전송" />
+		                    <progress></progress>	                
+		            	</form>
+		            </div>
+				</div>
+				<div class="width_wrapper">
+					현재 경로 : <span id="current_path_div">/</span>
+				</div>
+				
+				<div class="width_wrapper bordered">
+					<div id="foldertree">
+		                <ul id="root_folder">
+		                    <li>
+		                        /
+		                    </li>
+		                </ul>
+		            </div>
+		            <div id="folder_content" class="center">
+						
+		            </div> 
+				</div>
+		            
+		            <br/>
+		        <div class="width_wrapper">
+		            <div id="logout" class="block center login small">
+		            	<form accept-charset="UTF-8" action="login_check.php" class="simple_form user" id="user_new" method="post">
+	                    	<input class="half-width-button" id="user_logout" name="logout" type="button" value="Logout!" onclick="redirectToLogout();">
+		            	</form>
+	            	</div>
+	           	</div>
             </div>
-            <div id="foldertree">
-                <ul id="root_folder">
-                    <li>
-                        /
-                    </li>
-                </ul>
-            </div>
-            <div id="folder_content" class="center">
-			
-            </div>
-            <div id="folder_maker">
-				새폴더 만들기 : 
-				<input type="text" name="foldername" />
-				<input type="button" name="make_folder" value="폴더 만들기" />
-			</div>
-            <form id="fileupload" enctype="multipart/form-data" action="api/file/upload/" method="POST">
-                <!-- input의 name은 $_FILES 배열의 name을 결정합니다 -->
-                <div class="center">
-                    이 파일을 전송합니다:
-                    <input type="file" name="files[]" multiple>
-                    <input type="button" name="send" value="파일 전송" />
-                    <progress></progress>
-                </div>
-            </form>
-            <form accept-charset="UTF-8" action="login_check.php" class="simple_form user" id="user_new" method="post">
-                <div class="block center login small">
-                    <div class="block_content">
-                        <input class="half-width-button" id="user_logout" name="logout" type="button" value="Logout!" onclick="redirectToLogout();">
-                    </div>
-                </div>
-            </form>
         </div>
     </body>
 </html>
