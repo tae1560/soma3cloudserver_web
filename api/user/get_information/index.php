@@ -45,8 +45,8 @@ function getArguments(&$id, &$token) {
 	$token = $_POST['token'];
 
 	// DEBUG : using get for test
-	$id = $_GET['id'];
-	$hashedPassword = $_GET['token'];
+	//$id = $_GET['id'];
+	//$hashedPassword = $_GET['token'];
 }
 
 // args : user's id

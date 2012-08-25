@@ -6,28 +6,28 @@
  *
  * description : 회원정보를 등록하여 새로운 User를 생성한다.
  * HTTP Method : POST
- * 
+ *
  * Arguments
  * 	id
  * 		Required
  * 		Description : 회원의 ID
  * 		Example Values : test
- * 
+ *
  * 	hashedPassword
  * 		Required
  * 		Description : MD5로 hashing된 회원의 Password
  * 		Example Values : 098f6bcd4621d373cade4e832627b4f6
- * 
+ *
  *
  * Result Values
  * 	result
  * 		Description : 결과에 대한 메시지
  * 		Example Values : Success, Failed to authenticate
- * 
+ *
  * 	result_code
  * 		Description : 결과에 대한 숫자 코드
  * 		Example Values : 200
- * 	 
+ *
  */
 
 // load configurations and librarys
@@ -43,8 +43,8 @@ function getArguments(&$id, &$hashedPassword) {
 	$returnValue = null;
 
 	// DEBUG : using get for test
-	$id = $_GET['id'];
-	$hashedPassword = $_GET['hashedPassword'];
+	//$id = $_GET['id'];
+	//$hashedPassword = $_GET['hashedPassword'];
 }
 
 // args : user's id and hashedpassword
@@ -56,12 +56,8 @@ function validArguments($id, $hashedPassword) {
 		return true;
 }
 
-// description : check userinformation with database
-// args : user's id and hashedpassword
-// return : true if userinformation is valid
-function validUserInformation($id, $hashedPassword) {
-		
-		/*
+// return : true if user information added successfully
+function addUserInformation($id, $hashedPassword) {
 	global $configure;
 	global $dbconn;
 
@@ -73,27 +69,36 @@ function validUserInformation($id, $hashedPassword) {
 	}
 
 	// get user information from database
-	$query = "SELECT * FROM ".$configure['user_information_table_name']." WHERE id='$id' AND password='$hashedPassword';";
+	$query = "SELECT * FROM " . $configure['user_information_table_name'] . " WHERE id='$id';";
 	$result = mysql_query($query);
 	if (!$result) {
 		echo "질의 수행시 오류가 발생하였습니다.";
 		exit ;
 	}
-	
-	$rows  = mysql_num_rows($result);
-	
-	mysql_close($link);
-	
-	if ($rows == 1) return true;
-	else return false;
-		 * *
-		 */
+
+	$rows = mysql_num_rows($result);
+
+	if ($rows == 0) {
+		$query = "INSERT INTO " . $configure['user_information_table_name'] . " VALUES (NULL, '$id', '$hashedPassword', default);";
+		$result = mysql_query($query);
+		if (!$result) {
+			echo "질의 수행시 오류가 발생하였습니다.1".mysql_error();
+			exit ;
+		}
+
+		mysql_close($link);
+		return true;
+	} else {
+		// id duplication
+		mysql_close($link);
+		return false;
+	}
 }
 
-// args : reference of variable for return with json 
+// args : reference of variable for return with json
 function process(&$returnValue) {
 	global $configure;
-	
+
 	// get arguments
 	getArguments($id, $hashedPassword);
 
@@ -105,14 +110,12 @@ function process(&$returnValue) {
 	}
 
 	// check if id and password is val
-	if (validUserInformation($id, $hashedPassword) == true) {
-		$token = tokenGenerated($id, $hashedPassword);
-		$returnValue['token'] = $token;
+	if (addUserInformation($id, $hashedPassword) == true) {
 		$returnValue['result'] = $configure['results']['success']['message'];
-		$returnValue['result_code'] = $configure['results']['success']['code'];				
+		$returnValue['result_code'] = $configure['results']['success']['code'];
 	} else {
-		$returnValue['result'] = $configure['results']['failed_authentication']['message'];
-		$returnValue['result_code'] = $configure['results']['failed_authentication']['code'];
+		$returnValue['result'] = $configure['results']['conflict']['message'];
+		$returnValue['result_code'] = $configure['results']['conflict']['code'];
 	}
 }
 
