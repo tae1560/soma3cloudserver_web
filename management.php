@@ -14,6 +14,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     <head>
         <title>the singer invitation - purchase</title>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <link type="text/css" rel="stylesheet" href="styles/common.css" />
         <link type="text/css" rel="stylesheet" href="styles/management.css" />
         <link rel="stylesheet" type="text/css" href="jqplot/src/jquery.jqplot.css" />
         <link rel="stylesheet" type="text/css" href="jqplot/examples.css" />
