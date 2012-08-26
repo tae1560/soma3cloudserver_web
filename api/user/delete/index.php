@@ -1,10 +1,10 @@
 <?PHP
 /*
  * openAPI
- * api/user/get_information
- * created on 12.08.25 by LEETAEHO(tae1560@gmail.com)
+ * api/user/delete
+ * created on 12.08.26 by LEETAEHO(tae1560@gmail.com)
  *
- * description : id를 기반으로 회원 정보를 얻어온다. token이 같이 주어질 경우 더 많은 정보를 얻어온다.
+ * description : 사용자 정보를 서버로부터 삭제한다.
  * HTTP Method : POST
  *
  * Arguments
@@ -14,7 +14,7 @@
  * 		Example Values : test
  *
  * 	token
- * 		Optional
+ * 		Required
  * 		Description : 회원 인증을 통해 서버로부터 받은 token
  * 		Example Values : e7ee5db94ed30dbf5da2d0ed4f93441a
  *
@@ -26,10 +26,6 @@
  * 	result_code
  * 		Description : 결과에 대한 숫자 코드
  * 		Example Values : 200
- *
- * 	user
- * 		Description : user 정보
- * 		Example Values : {"id":"test","space":10240}
  *
  */
 
@@ -49,19 +45,18 @@ function getArguments(&$id, &$token) {
 	//$token = $_GET['token'];
 }
 
-// args : user's id
+// args : user's id, token
 // return : true if arguments are valid
-function validArguments($id) {
-	if ($id == null)
+function validArguments($id, $token) {
+	if ($id == null || $token == null)
 		return false;
 	else
 		return true;
 }
 
-// description : get userinformation
-// args : user's id and token
-// return : userinformation array
-function getUserInformation($id, $token) {
+// args : user's id
+// return : true if remove is success
+function removeUser($id) {
 	global $configure;
 	global $dbconn;
 
@@ -72,29 +67,13 @@ function getUserInformation($id, $token) {
 		exit ;
 	}
 
-	// get user information from database
-	$query = "SELECT * FROM " . $configure['user_information_table_name'] . " WHERE id='$id';";
+	// delete user record	
+	$query = "DELETE FROM " . $configure['user_information_table_name'] . " WHERE id='$id';";
 	$result = mysql_query($query);
 	if (!$result) {
 		echo "질의 수행시 오류가 발생하였습니다.";
 		exit ;
 	}
-
-	$rows = mysql_num_rows($result);
-	
-	if ($rows != 1) {
-		return null;
-	}
-	
-	$row = mysql_fetch_array($result);
-
-	if ($token == searchToken($id) && validToken($token)) {
-		// authentication mode
-
-	}
-
-	$user['id'] = $row['id'];
-	$user['space'] = $row['space'];
 
 	mysql_close($link);
 
@@ -105,20 +84,30 @@ function getUserInformation($id, $token) {
 function process(&$returnValue) {
 	global $configure;
 
-	// get arguments
-	getArguments($id, $token);
-
 	// invalid argument block
 	if (validArguments($id) == false) {
 		$returnValue['result'] = $configure['results']['invalid_argument']['message'];
 		$returnValue['result_code'] = $configure['results']['invalid_argument']['code'];
 		return;
 	}
-
-	// get user information
-	$returnValue['user'] = getUserInformation($id, $token);
-	$returnValue['result'] = $configure['results']['success']['message'];
-	$returnValue['result_code'] = $configure['results']['success']['code'];
+	
+	// token validation block
+	if (validToken($token) == false) {
+		$returnValue['result'] = $configure['results']['failed_authentication']['message'];
+		$returnValue['result_code'] = $configure['results']['failed_authentication']['code'];
+		return;
+	}
+	
+	// remove session
+	$result = removeUser($id);
+	
+	if ($result == true) {
+		$returnValue['result'] = $configure['results']['success']['message'];
+		$returnValue['result_code'] = $configure['results']['success']['code'];
+	} else {
+		$returnValue['result'] = $configure['results']['internal_error']['message'];
+		$returnValue['result_code'] = $configure['results']['internal_error']['code'];
+	}
 }
 
 function main() {

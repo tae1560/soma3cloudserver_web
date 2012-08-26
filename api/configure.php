@@ -22,4 +22,8 @@ $configure['results']['failed_authentication']['code'] = 401;
 
 $configure['results']['conflict']['message'] = "Conflict occured";
 $configure['results']['conflict']['code'] = 409;
+
+$configure['results']['internal_error']['message'] = "Internal Server Error";
+$configure['results']['internal_error']['code'] = 500;
+
 ?>
