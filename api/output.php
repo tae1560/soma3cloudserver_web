@@ -7,7 +7,12 @@ function array_to_xml($array, $xml = false){
     }
     foreach($array as $key => $value){
         if(is_array($value)){
-            array2xml($value, $xml->addChild($key));
+        	if (is_numeric($key)) {
+        		// only numberic element name is error
+				array_to_xml($value, $xml->addChild("element"));				
+			} else {
+				array_to_xml($value, $xml->addChild($key));
+			}
         }else{
             $xml->addChild($key, $value);
         }
@@ -16,8 +21,8 @@ function array_to_xml($array, $xml = false){
 }
 function output_result($array) {
 	// DEBUG : only json mode
-	echo json_encode($array);
-	return;
+	//echo json_encode($array);
+	//return;
 	
 	
 	if (strtolower($_GET['response_object']) == "json") {
