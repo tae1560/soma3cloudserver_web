@@ -50,9 +50,9 @@ function getArguments(&$id, &$token, &$folderpath) {
 	$folderpath = $_POST['folderpath'];
 
 	// DEBUG : using get for test
-	//$id = $_GET['id'];
-	//$token = $_GET['token'];
-	//$folderpath = $_GET['folderpath'];
+	// $id = $_GET['id'];
+	// $token = $_GET['token'];
+	// $folderpath = $_GET['folderpath'];
 }
 
 // args : inputed parameters
@@ -89,26 +89,27 @@ function process() {
 	$path = removeSubdir($folderpath);
 
 	// get list from folder
-	$filename = "../../storage/" . $id . "/" . $path;
+	$filename = $configure['storage_dir'] . $id . "/" . $path;
 
 	if (file_exists($filename)) {
-		$fileList = scandir($filename) or die("scandir failed");
+		//$fileList = scandir($filename) or die("scandir failed");
 
-		foreach ($fileList as $file) {
+		$p = @opendir($filename);
+		while ($file = readdir($p)) {
 			if ($file == "." || $file == "..") {
 				continue;
 			}
 			$filepath = $filename . "/" . $file;
-			
+
 			if (file_exists($filepath)) {
 				$file_stat = stat($filepath);
 
 				$file_information['name'] = basename($filepath);
 				$file_information['type'] = filetype($filepath);
 				$file_information['size'] = $file_stat['size'];
-				
+
 				$list[] = $file_information;
-				
+
 			}
 		}
 

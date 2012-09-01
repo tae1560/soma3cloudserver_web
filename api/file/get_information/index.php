@@ -89,7 +89,7 @@ function process() {
 	$path = removeSubdir($filepath);
 	
 	// get list from folder
-	$filename = "../../storage/".$id."/".$path;
+	$filename = $configure['storage_dir'].$id."/".$path;
 	if (file_exists($filename)) {
 		$file_stat = stat($filename);
 		
