@@ -7,7 +7,7 @@ $id = $_POST['id'];
 $password = $_POST['password'];
 
 $args = array('id' => $id, 'hashedPassword' => md5($password) );
-$response = getResponstWithPost("/api/user/get_token/index.php", $args);
+$response = getResponstWithPost("/api/user/get_token/index.php?response_object=json", $args);
 $data = json_decode($response);
 //echo $response;
 
