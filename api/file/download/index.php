@@ -40,9 +40,9 @@ function getArguments(&$id, &$token, &$filepath) {
 	$filepath = $_POST['filepath'];
 
 	// DEBUG : using get for test
-	//$id = $_GET['id'];
-	//$token = $_GET['token'];
-	//$filepath = $_GET['filepath'];
+	// $id = $_GET['id'];
+	// $token = $_GET['token'];
+	// $filepath = $_GET['filepath'];
 }
 
 // args : inputed parameters
@@ -79,14 +79,14 @@ function process() {
 	$path = removeSubdir($filepath);
 	
 	// get list from folder
-	$filename = "../../storage/" . $id . "/" . $path;
+	$filename = $configure['storage_dir'] . $id . "/" . $path;
 
 	// file download start
 	//ob_start();
 
 	if (file_exists($filename) && filetype($filename) != "dir") {
 		header("Content-Type: application/octet-stream");
-		Header("Content-Disposition: attachment;; filename=$downfile");
+		Header("Content-Disposition: attachment;; filename=$filepath");
 		header("Content-Transfer-Encoding: binary");
 		Header("Content-Length: " . (string)(filesize($filename)));
 		Header("Cache-Control: cache, must-reval!idate");
