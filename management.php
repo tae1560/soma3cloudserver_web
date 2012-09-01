@@ -127,8 +127,8 @@ $row = mysql_fetch_array($result);
                     <th> hostname </th>
                     <th> 받은 패킷 </th>
                     <th> 보낸 패킷 </th>
-                    <th> 하드 사용량(byte) </th>
-                    <th> 유저 할당량(byte) </th>
+                    <th> 하드 사용량(MB) </th>
+                    <th> 유저 할당량(MB) </th>
                 </thead>
                 <?PHP
 // lvm state part
@@ -148,8 +148,8 @@ $row = mysql_fetch_array($result);
                     <td><?PHP echo $row[0];?></td>
                     <td><?PHP echo $row[1];?></td>
                     <td><?PHP echo $row[2];?></td>
-                    <td><?PHP echo $row[3];?></td>
-                    <td><?PHP echo $row[4];?></td>
+                    <td><?PHP echo (int)($row[3]/1024/1024);?></td>
+                    <td><?PHP echo (int)($row[4]/1024/1024);?></td>
                 </tr>
                 <?PHP
 					} // end of for statement

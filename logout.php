@@ -9,7 +9,7 @@ $token = $_SESSION['token'];
 
 $args = array('id' => $id, 'token' => $token);
 
-$response = getResponstWithPost("/api/user/logout/index.php", $args);
+$response = getResponstWithPost("/api/user/logout/index.php?response_object=json", $args);
 $data = json_decode($response);
 
 // case별로 처리하기
