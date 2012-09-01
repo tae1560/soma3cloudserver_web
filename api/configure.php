@@ -8,6 +8,7 @@ $configure['token_information_table_name'] = 'user_session';
 
 
 $configure['token_timeout'] = 30; // 30 minutes
+$configure['storage_dir'] = "../../../pvfs/";
 	
 
 // result messages and codes
