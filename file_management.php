@@ -45,4 +45,12 @@ function get_dir_list($id, $token) {
 			return null;
 	}
 }
+
+function downloadFile($id, $token, $path) {
+	// args
+
+	$args = array('id' => $id, 'token' => $token, 'filepath' => $path);
+	$response = getResponstWithPost("/api/file/download/index.php?response_object=json", $args);
+	echo $response;
+}
 ?>

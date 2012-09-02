@@ -15,20 +15,17 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 			function redirectToLogout() {
 				window.location = "logout.php";
 			}
+			function downloadFile(path) {
+				// post_to_url(path, params, method)
+				var session_id = '<?PHP echo $_SESSION['id'];?>';
+				var session_token = '<?PHP echo $_SESSION['token'];?>';
+				post_to_url("api/file/download/", {'id':session_id, 'token':session_token, 'filepath':path});
+			}
         </script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-        <script language="javascript" src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
-        <!-- <script language="javascript" src="scripts/jquery-1.2.6.js" /> -->
-<script>
-	$(document).ready() {// document.onload = function() 과 유사하다.
-		$("div").css("color", "#f00");
-	});
-	$() {// document.onload = function() 과 유사하다.
-		$("div").css("color", "#f00");
-	});
-        </script>
+        <script src="scripts/utils.js"></script>
     </head>
     <body>
+    	
         <div class="wrapper">
             <div class="center title">
                 <?PHP echo $_SESSION['id'] . "님 로그인을 환영합니다.";?>
@@ -45,23 +42,23 @@ $list = get_list($_SESSION['id'], $_SESSION['token']);
 foreach ($list as $one) {
                     ?>
                     <tr>
-                        <td><a href="api/file/download?id=<?=$_SESSION['id'];?>&token=<?=$_SESSION['token'];?>&filepath=<?=$one -> name;?>"><?=$one -> name;?></a></td>
-                        <td><?=$one -> type;?></td>
-                        <td><?=$one -> size;?></td>
+                        <td><a href="#" onclick="downloadFile('<?PHP echo $one -> name;?>')"><?PHP echo $one -> name;?></a></td> 
+                        <td><?PHP echo $one -> type;?></td>
+                        <td><?PHP echo $one -> size;?></td>
                     </tr>
                     <?PHP
 						}
                     ?>
                 </table>
             </div>
-            <form enctype="multipart/form-data" action="http://172.16.181.151/api/file/upload/" method="POST">
+            <form enctype="multipart/form-data" action="api/file/upload/" method="POST">
                 <!-- input의 name은 $_FILES 배열의 name을 결정합니다 -->
                 <div class="center">
                     이 파일을 전송합니다:
                     <input type="file" name="files[]" multiple>
                     <input type="submit" value="파일 전송" />
-                    <input type="hidden" name="id" value="<?=$_SESSION['id'];?>" />
-                    <input type="hidden" name="token" value="<?=$_SESSION['token'];?>" />
+                    <input type="hidden" name="id" value="<?PHP echo $_SESSION['id'];?>" />
+                    <input type="hidden" name="token" value="<?PHP echo $_SESSION['token'];?>" />
                 </div>
             </form>
             <form accept-charset="UTF-8" action="login_check.php" class="simple_form user" id="user_new" method="post">
