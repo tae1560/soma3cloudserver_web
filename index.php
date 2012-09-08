@@ -1,12 +1,12 @@
 <?PHP
 
-session_start();
+include_once "util.php";
 
 // return : true if login status
 function isLogin() {
-	if ($_SESSION['id'] == null || $_SESSION['token'] == null) {
-		$_SESSION['id'] = null;
-		$_SESSION['token'] = null;
+	if (getId() == null || getToken() == null) {
+		unsetId();
+		unsetToken();	 
 		return false;
 	} 
 	

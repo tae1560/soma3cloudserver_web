@@ -3,9 +3,9 @@ session_start();
 
 include_once ("util.php");
 
-$id = $_SESSION['id'];
+$id = getId();
 
-$token = $_SESSION['token'];
+$token = getToken();
 
 $args = array('id' => $id, 'token' => $token);
 
@@ -19,8 +19,8 @@ switch ($data->result_code) {
 		session_start();
 
 		messageWithAlert("Logout Success");
-		$_SESSION['id'] = null;
-		$_SESSION['token'] = null;
+		unsetId();
+		unsetToken();
 
 		redirectToURL("index.php");
 
@@ -29,8 +29,8 @@ switch ($data->result_code) {
 	default :
 		//messageWithAlert("Failed");
 		echo "비정상종료";
-		$_SESSION['id'] = null;
-		$_SESSION['token'] = null;
+		unsetId();
+		unsetToken();
 		redirectToURL("index.php", 3);
 		break;
 }

@@ -53,7 +53,7 @@ function get_dir_list($id, $token) {
 
 function get_dir_list_session() {
 	session_start();
-	return get_dir_list($_SESSION['id'], $_SESSION['token']);
+	return get_dir_list(getId(), getToken());
 }
 
 function downloadFile($id, $token, $path) {

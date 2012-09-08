@@ -19,8 +19,8 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <link type="text/css" rel="stylesheet" href="styles/main.css" />
         <script type="text/javascript" src="scripts/jquery-1.8.1.min.js"></script>
         <script type="text/javascript">
-        	var session_id =<?PHP echo "\"" . $_SESSION['id'] . "\""; ?>;
-			var session_token = <?PHP echo "\"" . $_SESSION['token'] . "\""; ?>;
+        	var session_id =<?PHP echo "\"" . getId() . "\""; ?>;
+			var session_token = <?PHP echo "\"" . getToken() . "\""; ?>;
 	var temp;
 	var current_path;
 
@@ -340,7 +340,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <div class="wrapper">
         	<div class="block_content">
 	            <div class="center title">
-	                <?PHP echo $_SESSION['id'] . "님 로그인을 환영합니다."; ?>
+	                <?PHP echo getId() . "님 로그인을 환영합니다."; ?>
 	            </div>
 				<div class="width_wrapper">
 					<div id="folder_maker" class="block">

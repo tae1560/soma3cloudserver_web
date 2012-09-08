@@ -16,6 +16,12 @@ function messageWithAlert($message) {
 	echo "</script>";
 }
 
+function messageWithLog($message) {
+	echo "<script type=\"text/javascript\" charset=\"utf-8\">";
+	echo "console.log($message)";
+	echo "</script>";
+}
+
 function redirectToURL($url, $delay = 0) {
 	echo "<script type=\"text/javascript\" charset=\"utf-8\">";
 	echo "window.location = \"$url\";";
@@ -25,8 +31,8 @@ function redirectToURL($url, $delay = 0) {
 function validate_session() {
 	session_start();
 	
-	$id = $_SESSION['id'];
-	$token = $_SESSION['token'];
+	$id = getId();
+	$token = getToken();
 	if ($id == null || $token == null) {
 		return false;
 	}
@@ -40,11 +46,27 @@ function validate_session() {
 		case 401 :
 		// session timeout
 			messageWithAlert("세션 시간 초과로 로그아웃 됩니다.");
-			$_SESSION['id'] = null;
-			$_SESSION['token'] = null;
+			unsetId();
+			unsetToken();
 			return false;
 	}
 
 	return true;
+}
+
+function getId() {
+	return $_COOKIE['id'];
+}
+
+function unsetId() {
+	unset($_COOKIE['id']);
+}
+
+function getToken() {
+	return $_COOKIE['token'];
+}
+
+function unsetToken() {
+	unset($_COOKIE['token']);
 }
 ?>
