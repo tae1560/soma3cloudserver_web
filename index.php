@@ -4,7 +4,9 @@ session_start();
 
 // return : true if login status
 function isLogin() {
-	if ($_SESSION['token'] == null) {
+	if ($_SESSION['id'] == null || $_SESSION['token'] == null) {
+		$_SESSION['id'] = null;
+		$_SESSION['token'] = null;
 		return false;
 	} 
 	
