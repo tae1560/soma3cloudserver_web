@@ -5,8 +5,8 @@ include_once "util.php";
 // return : true if login status
 function isLogin() {
 	if (getId() == null || getToken() == null) {
-		unsetId();
-		unsetToken();	 
+		if(getId()) unsetId();
+		if(getToken()) unsetToken();
 		return false;
 	} 
 	

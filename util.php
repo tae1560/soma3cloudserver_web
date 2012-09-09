@@ -29,8 +29,6 @@ function redirectToURL($url, $delay = 0) {
 }
 
 function validate_session() {
-	session_start();
-	
 	$id = getId();
 	$token = getToken();
 	if ($id == null || $token == null) {
@@ -58,15 +56,32 @@ function getId() {
 	return $_COOKIE['id'];
 }
 
+function setId($id) {
+	setcookie("id", $id, 0, "/", "10.12.17.214");
+	setcookie("id", $id, 0, "/", "10.12.17.216");
+	setcookie("id", $id, 0, "/", "10.12.17.218");
+}
+
 function unsetId() {
-	unset($_COOKIE['id']);
+	//unset($_COOKIE['id']);
+	setcookie('id', '', 1);
 }
 
 function getToken() {
 	return $_COOKIE['token'];
 }
 
+function setToken($token) {
+	//setcookie("token", $token);
+	setcookie("token", $token, 0, "/", "10.12.17.214");
+	setcookie("token", $token, 0, "/", "10.12.17.216");
+	setcookie("token", $token, 0, "/", "10.12.17.218");
+}
+
 function unsetToken() {
-	unset($_COOKIE['token']);
+	//unset($_COOKIE['token']);
+				//messageWithAlert("unset token");
+	
+	setcookie('token', '', 1);
 }
 ?>

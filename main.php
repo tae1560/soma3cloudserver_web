@@ -61,6 +61,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 									value : e.loaded,
 									max : e.total
 								});
+								$.post("/api/file/get_information/index.php", { id: session_id, token: session_token } );
 							}
 						}, false);
 						// for handling the progress of the upload
@@ -76,6 +77,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					$('progress').hide();
 					//location.reload();
 					loadFileTableWithPath(current_path);
+					//console.log(data);
 				},
 				error : function(data){
 					console.log(data['responseText']);

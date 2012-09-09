@@ -24,6 +24,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <!-- <link rel="stylesheet" type="text/css" href="jqplot/examples.css" /> -->
         <!-- BEGIN: load jquery -->
         <script language="javascript" type="text/javascript" src="jqplot/src/jquery.js"></script>
+        <script language="javascript" type="text/javascript" src="scripts/jquery.dateFormat-1.0.js"></script>
         <!-- END: load jquery -->
         <!-- BEGIN: load jqplot -->
         <script language="javascript" type="text/javascript" src="jqplot/src/jquery.jqplot.js"></script>
@@ -46,259 +47,453 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <script type="text/javascript" language="javascript">
 			$(document).ready(function() {
 				$.jqplot.config.enablePlugins = true;
-				/*
-				var goog = [["2009/6/22 2:12", 425.32], ["2009/6/22 9:11", 420.09], ["2009/6/22 9:13", 424.84], ["2009/6/22 9:14", 444.32], ["2009/6/22 10:15", 417.23], ["2009/6/22 12:15", 393.5]];
-				var goog2 = [["2009/6/22 2:12", 525.32], ["2009/6/22 9:11", 520.09], ["2009/6/22 9:13", 524.84], ["2009/6/22 9:14", 544.32], ["2009/6/22 10:15", 617.23], ["2009/6/22 12:15", 593.5]];
-				var plot = $.jqplot('chart', [goog, goog2], {
-					title : 'Storage Statistics',
-					series : [{
-						label : 'Storage Statistics',
-						neighborThreshold : -1
-					}],
-					axes : {
-						xaxis : {
-							renderer : $.jqplot.DateAxisRenderer,
-							min : '2009/6/22 1:00',
-							tickInterval : "1 hours",
-							tickOptions : {
-								formatString : "%H:%M"
-							}
-						},
-						yaxis : {
-							renderer : $.jqplot.LogAxisRenderer,
-							tickOptions : {
-								formatString : '$%.2f'
-							}
-						}
-					},
-					cursor : {
-						zoom : false,
-						showTooltip : false,
-						clickReset : true
-					}
-				});
-*/
-				loadLoadbalancingState();
-				loadBandwidthState();
-				loadStorageState();
-				loadLoadbalancingStatistics();
 
+				// start getting datas
+				getLvmStateData();
+				getStorageStateData();
+				getLvmStatisticsData();
+				getStorageStatisticsData();
+				
+				
 			});
 			
-			//////////// current state //////////// 
-			function loadLoadbalancingState() {
+			//////////// getting datas ////////////
+			function getLvmStateData() {
 				$.ajax({
 					url : 'api/management/get_data/index.php?category=lvm_state&response_object=json', //server script to process data
 					type : 'GET',
 					success : function(data) {
-						var json_data = json_parse(data);						
-						
-						var array = new Array();
-						for (var index in json_data) {
-							var number_of_conn = json_data[index]['active_conn'] + json_data[index]['inact_conn'];
-						  	array.push([json_data[index]['hostname'], number_of_conn]);
-						};
-						var plot = $.jqplot('chart_lvm_state', [array], {
-							title : 'LB State',
-							series : [{
-								renderer : $.jqplot.BarRenderer
-							}],
-							axesDefaults : {
-								tickRenderer : $.jqplot.CanvasAxisTickRenderer,
-								tickOptions : {
-									angle : -30,
-									fontSize : '10pt'
-								}
-							},
-							axes : {
-								xaxis : {
-									renderer : $.jqplot.CategoryAxisRenderer
-								}
-							}
-						});
-					},
-					error : function(data) {
-						console.log(data);
-					}
-				}); // end of ajax
-			}
-			
-			
-			function loadBandwidthState() {
-				$.ajax({
-					url : 'api/management/get_data/index.php?category=storage_state&response_object=json', //server script to process data
-					type : 'GET',
-					success : function(data) {
-						var json_data = json_parse(data);						
-						
-						var sum_of_rx_use = 0;
-						var sum_of_tx_use = 0;
-						for (var index in json_data) {
-							sum_of_rx_use += parseInt(json_data[index]['rx_use']);
-							sum_of_tx_use += parseInt(json_data[index]['tx_use']);
-						};
-						var array = new Array();
-						// 단위 : byte
-						array.push(["받는 데이터량(KB / s)", sum_of_rx_use / 3072]);
-						array.push(["보내는 데이터량(KB / s)", sum_of_tx_use / 3072]);
-						
-						var plot = $.jqplot('chart_bandwidth_state', [array], {
-							title : 'Bandwidth State',
-							series : [{
-								renderer : $.jqplot.BarRenderer
-							}],
-							axesDefaults : {
-								tickRenderer : $.jqplot.CanvasAxisTickRenderer,
-								tickOptions : {
-									angle : -30,
-									fontSize : '10pt'
-								}
-							},
-							axes : {
-								xaxis : {
-									renderer : $.jqplot.CategoryAxisRenderer
-								}
-							}
-						});
-					},
-					error : function(data) {
-						console.log(data);
-					}
-				}); // end of ajax
-			}
-			
-			
-			function loadStorageState() {
-				$.ajax({
-					url : 'api/management/get_data/index.php?category=storage_state&response_object=json', //server script to process data
-					type : 'GET',
-					success : function(data) {
-						var json_data = json_parse(data);
-						
-						var sum_of_hdd_use = 0;
-						var sum_of_hdd_total = 0;
-						for (var index in json_data) {
-							sum_of_hdd_use += parseInt(json_data[index]['hdd_use']);
-							sum_of_hdd_total += parseInt(json_data[index]['hdd_total']);
-							// user_space_use
-						};
-						
-						var array = new Array();
-						console.log(sum_of_hdd_use);
-						console.log(sum_of_hdd_total);
-						array.push(["현재사용량", sum_of_hdd_use]);
-						array.push(["남은용량", sum_of_hdd_total - sum_of_hdd_use]);
-						
-						//var array = [['Heavy Industry', 12], ['Retail', 9], ['Light Industry', 14], ['Out of home', 16], ['Commuting', 7], ['Orientation', 9]];
-						var plot = $.jqplot('chart_storage_state', [array], {
-							seriesDefaults : {
-								renderer : jQuery.jqplot.PieRenderer,
-								rendererOptions : {
-									// Turn off filling of slices.
-									fill : true,
-									showDataLabels : true,
-									// Add a margin to seperate the slices.
-									sliceMargin : 0,
-									// stroke the slices with a little thicker line.
-									lineWidth : 5
-								}
-							},
-							legend : {
-								show : true,
-								location : 'e'
-							}
-						});
-						
-						
-					},
-					error : function(data) {
-						console.log(data);
-					}
-				}); // end of ajax
-			}
-			
-			//////////// statistics ////////////
-			function loadLoadbalancingStatistics() {
-				$.ajax({
-					url : 'api/management/get_data/index.php?category=lvm_statistics&response_object=json', //server script to process data
-					type : 'GET',
-					success : function(data) {
-						var json_data = json_parse(data);
-						
-						var array = new Array();
-						array[0] = new Array();
-						array[1] = new Array();
-						array[2] = new Array();
-						
-						for (var index in json_data) {
-							var position;
-							if (json_data[index]["hostname"] == "10.12.17.214") {
-								position = 0;
-							}
-							else if (json_data[index]["hostname"] == "10.12.17.216") {
-								position = 1;
-							}
-							else if (json_data[index]["hostname"] == "10.12.17.218") {
-								position = 2;
-							}
-							
-							var sum_of_conn = json_data[index]["active_conn"] + json_data[index]["inact_conn"];
-							var time = json_data[index]["time"];
-							//array[position].push([time.getDate(), sum_of_conn]);
-							//console.log(time);
-							var date = new Date(json_data[index]["time"]);
-							//dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT");
-							//var newDate = (date.getYear() + 1900) + "/" + (date.getMonth() + 1) + "/" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
-							//console.log(date.getDate() + 1);
-							//console.log(newDate);
-							array[position].push([json_data[index]["index"], sum_of_conn]);
-							
-							//array[position].push([index, sum_of_conn]);
-						}
-						
-						console.log(array);
-						
-						var plot = $.jqplot('chart_lvm_statistics', array, {
-							title : 'Storage Statistics',
-							// series : [{
-								// label : 'Storage Statistics',
-								// neighborThreshold : -1
-							// }],
-							axes : {
-								// xaxis : {
-									// renderer : $.jqplot.DateAxisRenderer,
-									// min : '2009/6/22 1:00',
-									// tickInterval : "1 hours",
-									// tickOptions : {
-										// formatString : "%H:%M"
-									// }
-								// },
-								// yaxis : {
-									// renderer : $.jqplot.LogAxisRenderer,
-									// tickOptions : {
-										// formatString : '$%.2f'
-									// }
-								// }
-							},
-							cursor : {
-								zoom : false,
-								showTooltip : false,
-								clickReset : true
-							}
-						});
-						
-						
+						loadLoadbalancingState(data);
 					},
 					error : function(data) {
 						console.log(data);
 					}
 				}); // end of ajax				
 			}
-			function loadBandwidthStatistics() {
-				
+			function getStorageStateData() {
+				$.ajax({
+					url : 'api/management/get_data/index.php?category=storage_state&response_object=json', //server script to process data
+					type : 'GET',
+					success : function(data) {
+						loadBandwidthState(data);
+						loadStorageState(data);
+					},
+					error : function(data) {
+						console.log(data);
+					}
+				}); // end of ajax
 			}
-			function loadStorageStatistics() {
+			function getLvmStatisticsData() {
+				$.ajax({
+					url : 'api/management/get_data/index.php?category=lvm_statistics&response_object=json', //server script to process data
+					type : 'GET',
+					success : function(data) {
+						loadLoadbalancingStatistics(data);
+					},
+					error : function(data) {
+						console.log(data);
+					}
+				}); // end of ajax
+			}
+			function getStorageStatisticsData() {
+				$.ajax({
+					url : 'api/management/get_data/index.php?category=storage_statistics&response_object=json', //server script to process data
+					type : 'GET',
+					success : function(data) {
+						loadBandwidthStatistics(data);
+						loadStorageStatistics(data);
+					},
+					error : function(data) {
+						console.log(data);
+					}
+				}); // end of ajax
+			}
+			
+			
+			//////////// current state //////////// 
+			function loadLoadbalancingState(data) {
+				var json_data = json_parse(data);						
 				
+				var array = new Array();
+				for (var index in json_data) {
+					var number_of_conn = parseInt(json_data[index]['active_conn']) + parseInt(json_data[index]['inact_conn']);
+				  	array.push([json_data[index]['hostname'], number_of_conn]);
+				};
+				var plot = $.jqplot('chart_lvm_state', [array], {
+					title : 'Load Balancing State',
+					series : [{
+						renderer : $.jqplot.BarRenderer
+					}],
+					axesDefaults : {
+						tickRenderer : $.jqplot.CanvasAxisTickRenderer,
+						tickOptions : {
+							angle : -30,
+							fontSize : '10pt'
+						}
+					},
+					axes : {
+						xaxis : {
+							renderer : $.jqplot.CategoryAxisRenderer
+						}
+					}
+				});
+			}
+			
+			
+			function loadBandwidthState(data) {
+				var json_data = json_parse(data);						
+				
+				var sum_of_rx_use = 0;
+				var sum_of_tx_use = 0;
+				for (var index in json_data) {
+					sum_of_rx_use += parseInt(json_data[index]['rx_use']);
+					sum_of_tx_use += parseInt(json_data[index]['tx_use']);
+				};
+				var array = new Array();
+				// 단위 : byte
+				array.push(["받는 데이터량(KB / s)", sum_of_rx_use / 3072]);
+				array.push(["보내는 데이터량(KB / s)", sum_of_tx_use / 3072]);
+				
+				var plot = $.jqplot('chart_bandwidth_state', [array], {
+					title : 'Bandwidth State (KB / s)',
+					series : [{
+						renderer : $.jqplot.BarRenderer
+					}],
+					axesDefaults : {
+						tickRenderer : $.jqplot.CanvasAxisTickRenderer,
+						tickOptions : {
+							angle : -30,
+							fontSize : '10pt'
+						}
+					},
+					axes : {
+						xaxis : {
+							renderer : $.jqplot.CategoryAxisRenderer
+						}
+					}
+				});
+			}
+			
+			
+			function loadStorageState(data) {
+				var json_data = json_parse(data);
+				
+				var sum_of_hdd_use = 0;
+				var sum_of_hdd_total = 0;
+				for (var index in json_data) {
+					sum_of_hdd_use += parseInt(json_data[index]['hdd_use']);
+					sum_of_hdd_total += parseInt(json_data[index]['hdd_total']);
+					// user_space_use
+				};
+				
+				var array = new Array();
+				array.push(["현재사용량", sum_of_hdd_use]);
+				array.push(["남은용량", sum_of_hdd_total - sum_of_hdd_use]);
+				
+				var plot = $.jqplot('chart_storage_state', [array], {
+					title : 'Storage Usage State',
+					seriesDefaults : {
+						renderer : jQuery.jqplot.PieRenderer,
+						rendererOptions : {
+							fill : true,
+							showDataLabels : true,
+							sliceMargin : 0,
+							lineWidth : 5
+						}
+					},
+					legend : {
+						show : true,
+						location : 'e'
+					}
+				});
+			}
+			
+			//////////// statistics ////////////
+			function loadLoadbalancingStatistics(data) {
+				var json_data = json_parse(data);
+				
+				var array = new Array();
+				array[0] = new Array();
+				array[1] = new Array();
+				array[2] = new Array();
+				
+				var max_of_conn = 0;
+				
+				for (var index in json_data) {
+					var position;
+					if (json_data[index]["hostname"] == "10.12.17.214") {
+						position = 0;
+					}
+					else if (json_data[index]["hostname"] == "10.12.17.216") {
+						position = 1;
+					}
+					else if (json_data[index]["hostname"] == "10.12.17.218") {
+						position = 2;
+					}
+					
+					var sum_of_conn =  parseInt(json_data[index]["active_conn"]) + parseInt(json_data[index]["inact_conn"]);
+					if (sum_of_conn > max_of_conn) max_of_conn = sum_of_conn;
+					var time = json_data[index]["time"];
+					var date = new Date(json_data[index]["time"]);
+					var newDate = $.format.date(date, 'yyyy/MM/dd HH:mm:ss');
+					//console.log(newDate+" "+sum_of_conn);
+					//2009/6/22 1:00
+					array[position].push([newDate, sum_of_conn]);
+					
+				}
+				
+				var plot = $.jqplot('chart_lvm_statistics', array, {
+					title : 'Load Balancing Statistics',
+					series : [{
+						label : '10.12.17.214',
+						neighborThreshold : -1
+					},
+					{
+						label : '10.12.17.216',
+						neighborThreshold : -1
+					},
+					{
+						label : '10.12.17.218',
+						neighborThreshold : -1
+					}],
+					axes : {
+						xaxis : {
+							renderer : $.jqplot.DateAxisRenderer,
+							//min : '2009/6/22 1:00',
+							tickInterval : "20 minutes",
+							tickOptions : {
+								formatString : "%H:%M"
+							}
+						},
+						yaxis : {
+							//renderer : $.jqplot.LogAxisRenderer,
+							// tickOptions : {
+								// formatString : '$%.2f'
+							// }
+							min : 0,
+							max : max_of_conn + 30
+						}
+					},
+					legend : {
+							show : true,
+							location : 'e'
+					},
+					cursor : {
+						zoom : true,
+						showTooltip : false,
+						clickReset : true
+					}
+				});
+			}
+			function loadBandwidthStatistics(data) {
+				var json_data = json_parse(data);
+				//console.log(json_data);
+				
+				var dataArray = new Array();
+				dataArray[0] = new Array();
+				dataArray[1] = new Array();
+				dataArray[2] = new Array();						
+				
+				for (var index in json_data) {
+					var position;
+					if (json_data[index]["hostname"] == "10.12.17.214") {
+						position = 0;
+					}
+					else if (json_data[index]["hostname"] == "10.12.17.216") {
+						position = 1;
+					}
+					else if (json_data[index]["hostname"] == "10.12.17.218") {
+						position = 2;
+					}
+					
+					var time = json_data[index]["time"];
+					var rx_use = json_data[index]["rx_use"];
+					var tx_use = json_data[index]["tx_use"]; 
+					dataArray[position].push([time, rx_use, tx_use]);
+				}
+				
+				// summarize 
+				var array = new Array();
+				array[0] = new Array();
+				array[1] = new Array();
+				
+				var max = Math.max(dataArray[0].length, dataArray[1].length, dataArray[2].length);
+				
+				for (var index = 0; index < max; index ++) {
+					var sum_of_rx_use = 0;
+					var sum_of_tx_use = 0;
+					var number_of_data = 0;
+					var sum_of_time = 0;
+					
+					for (var j = 0; j < 3; j++) {
+						if(dataArray[j][index] == undefined) continue;
+						
+						var time = new Date(dataArray[j][index][0]);
+						var rx_use = dataArray[j][index][1];
+						var tx_use = dataArray[j][index][2];
+						
+						sum_of_rx_use += parseInt(rx_use) / 3072;
+						sum_of_tx_use += parseInt(tx_use) / 3072;
+						sum_of_time += time.getTime();
+						number_of_data ++;
+					}
+					
+					
+					//if (dataArray[1][index] == undefined || dataArray[2][index] == undefined ) console.log("test");
+					//console.log(dataArray[0][index]);
+					
+					var averageDate = new Date(sum_of_time/number_of_data);
+					
+					
+					var newDate = $.format.date(averageDate, 'yyyy/MM/dd HH:mm:ss');
+					//console.log(newDate);
+					
+					array[0].push([newDate, sum_of_rx_use]);
+					array[1].push([newDate, sum_of_tx_use]);
+				}	
+				
+				//console.log(array);
+				
+				var plot = $.jqplot('chart_bandwidth_statistics', array, {
+					title : 'Bandwidth Statistics (KB / s)',
+					series : [{
+						label : '받은 데이터량',
+						neighborThreshold : -1
+					},
+					{
+						label : '보낸 데이터량',
+						neighborThreshold : -1
+					}],
+					axes : {
+						xaxis : {
+							renderer : $.jqplot.DateAxisRenderer,
+							//min : '2009/6/22 1:00',
+							tickInterval : "30 minutes",
+							tickOptions : {
+								formatString : "%H:%M"
+							}
+						},
+						yaxis : {
+							//renderer : $.jqplot.LogAxisRenderer,
+							// tickOptions : {
+								// formatString : '$%.2f'
+							// }
+							//min : -10,
+							//max : max_of_conn + 30
+						}
+					},
+					legend : {
+							show : true,
+							location : 'e'
+					},
+					cursor : {
+						zoom : true,
+						showTooltip : false,
+						clickReset : true
+					}
+				});
+			}
+			function loadStorageStatistics(data) {
+				var json_data = json_parse(data);
+				console.log(json_data);
+				
+				var dataArray = new Array();
+				dataArray[0] = new Array();
+				dataArray[1] = new Array();
+				dataArray[2] = new Array();						
+				
+				for (var index in json_data) {
+					var position;
+					if (json_data[index]["hostname"] == "10.12.17.214") {
+						position = 0;
+					}
+					else if (json_data[index]["hostname"] == "10.12.17.216") {
+						position = 1;
+					}
+					else if (json_data[index]["hostname"] == "10.12.17.218") {
+						position = 2;
+					}
+					
+					var time = json_data[index]["time"];
+					var hdd_total = json_data[index]["hdd_total"];
+					var hdd_use = json_data[index]["hdd_use"]; 
+					dataArray[position].push([time, hdd_total, hdd_use]);
+				}
+				
+				// summarize 
+				var array = new Array();
+				array[0] = new Array();
+				array[1] = new Array();
+				
+				var max = Math.max(dataArray[0].length, dataArray[1].length, dataArray[2].length);
+				
+				for (var index = 0; index < max; index ++) {
+					var sum_of_hdd_total = 0;
+					var sum_of_hdd_use = 0;
+					var number_of_data = 0;
+					var sum_of_time = 0;
+					
+					for (var j = 0; j < 3; j++) {
+						if(dataArray[j][index] == undefined) continue;
+						
+						var time = new Date(dataArray[j][index][0]);
+						var hdd_total = dataArray[j][index][1];
+						var hdd_use = dataArray[j][index][2];
+						
+						sum_of_hdd_total += parseInt(hdd_total) / (1024*1024);
+						sum_of_hdd_use += parseInt(hdd_use) / (1024*1024) ;
+						sum_of_time += time.getTime();
+						number_of_data ++;
+					}
+					
+					var averageDate = new Date(sum_of_time/number_of_data);
+					var newDate = $.format.date(averageDate, 'yyyy/MM/dd HH:mm:ss');
+					//console.log(newDate);
+					
+					array[0].push([newDate, sum_of_hdd_total]);
+					array[1].push([newDate, sum_of_hdd_use]);
+				}	
+				
+				//console.log(array);
+				
+				var plot = $.jqplot('chart_storage_statistics', array, {
+					title : 'Storage Usage Statistics (MB)',
+					series : [{
+						label : '하드 총용량',
+						neighborThreshold : -1
+					},
+					{
+						label : '하드 사용량',
+						neighborThreshold : -1
+					}],
+					axes : {
+						xaxis : {
+							renderer : $.jqplot.DateAxisRenderer,
+							//min : '2009/6/22 1:00',
+							tickInterval : "30 minutes",
+							tickOptions : {
+								formatString : "%H:%M"
+							}
+						},
+						yaxis : {
+							//renderer : $.jqplot.LogAxisRenderer,
+							// tickOptions : {
+								// formatString : '$%.2f'
+							// }
+							min : 0,
+							//max : max_of_conn + 30
+						}
+					},
+					legend : {
+							show : true,
+							location : 'e'
+					},
+					cursor : {
+						zoom : true,
+						showTooltip : false,
+						clickReset : true
+					}
+				});
 			}
 
         </script>
@@ -408,5 +603,7 @@ $row = mysql_fetch_array($result);
         <div id="chart_bandwidth_state" class="chart"></div>
         <div id="chart_storage_state" class="chart"></div>
         <div id="chart_lvm_statistics" class="chart"></div>
+        <div id="chart_bandwidth_statistics" class="chart"></div>
+        <div id="chart_storage_statistics" class="chart"></div>
     </body>
 </html>

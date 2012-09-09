@@ -17,15 +17,15 @@ switch ($data->result_code) {
 		session_start();
 	
 		echo "Login Success";
-		$_SESSION['id'] = $id;
-		$_SESSION['token'] = $data->token;
+		setId($id);
+		setToken($data->token);
 		
 		redirectToURL("index.php");
 		  
 		break;
 	
 	default:
-		messageWithAlert("Failed");
+		messageWithAlert("Failed to login : ".$data->result_code." ".$data->result);
 		redirectToURL("login.php",3);
 		break;
 }

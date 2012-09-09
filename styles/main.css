@@ -9,7 +9,8 @@ div#fileupload_div {
 div#foldertree {
     float: left;
     width: 30%;
-    display: block; 
+    display: block;
+    overflow: scroll; 
 }
 div#folder_content {
     float: none;
@@ -23,8 +24,8 @@ div#folder_content table {
 }
 div#folder_content table tr td, div#folder_content table thead th {
     width: 10%;
-    border-bottom: 1px dashed lightblue;
-    border-left: 1px dashed lightblue;
+    border-bottom: 1px dashed #DDDD22;
+    border-left: 1px dashed #DDDD22;
 }
 div#logout {
     float: none;
