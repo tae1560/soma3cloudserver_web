@@ -1,4 +1,8 @@
 <?PHP
+include_once "../../configure.php";
+include_once "../../output.php";
+include_once $configure['dbconn_path'];
+
 // configuration
 $configure['state_database_name'] = "csstate";
 $configure['lvm_state_table_name'] = "lvm_state";
@@ -8,24 +12,23 @@ $configure['statistics_database_name'] = "csstatistics";
 $configure['lvm_statistics_table_name'] = "lvm_states";
 $configure['storage_statistics_table_name'] = "storage_states";
 
-// connect to db
-include_once "../../dbconn.php";
-
 $link = mysql_connect($dbconn['address'], $dbconn['id'], $dbconn['password']) or die("Could not connect<br/>");
 
 $category = $_GET['category'];
+
+
 if ($category == "lvm_state") {
 	$select = mysql_select_db($configure['state_database_name']);
-	$query = "SELECT * FROM " . $configure['lvm_state_table_name'] . ";";
+	$query = "SELECT * FROM " . $configure['lvm_state_table_name'] . " ORDER BY 'index' DESC ;";
 } else if ($category == "storage_state") {
 	$select = mysql_select_db($configure['state_database_name']);
-	$query = "SELECT * FROM " . $configure['storage_state_table_name'] . ";";
+	$query = "SELECT * FROM " . $configure['storage_state_table_name'] . " ORDER BY 'index' DESC ;";
 } else if ($category == "lvm_statistics") {
 	$select = mysql_select_db($configure['statistics_database_name']);
-	$query = "SELECT * FROM " . $configure['lvm_statistics_table_name'] . " LIMIT 0, 60;";
+	$query = "SELECT * FROM " . $configure['lvm_statistics_table_name'] . " ORDER BY 'index' DESC LIMIT 0, 60;";
 } else if ($category == "storage_statistics") {
 	$select = mysql_select_db($configure['statistics_database_name']);
-	$query = "SELECT * FROM " . $configure['storage_statistics_table_name'] . "LIMIT 0, 60;";
+	$query = "SELECT * FROM " . $configure['storage_statistics_table_name'] . " ORDER BY 'index' DESC LIMIT 0, 120;";
 } else {
 	echo "Wrong category";
 	exit;
@@ -48,10 +51,10 @@ for ($i = 0; $i < $number_of_rows; $i++) {
 	$rows[] = mysql_fetch_array($result);
 }
 
-$json_data = json_encode($rows);
+//$json_data = json_encode($rows);
 
 // disconnect from db
 mysql_close($link);
 
-echo $json_data;
+output_result($rows);
 ?>

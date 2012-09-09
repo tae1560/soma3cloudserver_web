@@ -16,6 +16,7 @@ include_once "../../output.php";
 include_once "../../user/token_manager/token_manager.php";
 include_once "../common.php";
 include_once $configure['dbconn_path'];
+include_once "space_management.php";
 
 function getArguments(&$id, &$token, &$folderpath) {
 	$id = $_POST['id'];
@@ -43,7 +44,7 @@ function process() {
 
 	// get arguments
 	getArguments($id, $token, $folderpath);
-
+	
 	// invalid argument block
 	if (validArguments($id, $token, $folderpath) == false) {
 		$returnValue['result'] = $configure['results']['invalid_argument']['message'];
@@ -57,6 +58,34 @@ function process() {
 		$returnValue['result_code'] = $configure['results']['failed_authentication']['code'];
 		return $returnValue;
 	}
+	
+	// ADDED by LEETAEHO on 120908 : restrict file size with user
+	$total_file_size = 0;
+	$upload = isset($_FILES['files']) ? $_FILES['files'] : null;
+	if ($upload && is_array($upload['tmp_name'])) {
+        // param_name is an array identifier like "files[]",
+        // $_FILES is a multi-dimensional array:
+        foreach ($upload['tmp_name'] as $index => $value) {
+        	$size = isset($_SERVER['HTTP_X_FILE_SIZE']) ?
+                    $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index];
+        	$filesize = intval($size);
+			$total_file_size += $filesize;
+        }
+    } elseif ($upload || isset($_SERVER['HTTP_X_FILE_NAME'])) {
+        // param_name is a single object identifier like "file",
+        // $_FILES is a one-dimensional array:
+        $size = isset($_SERVER['HTTP_X_FILE_SIZE']) ?
+                $_SERVER['HTTP_X_FILE_SIZE'] : (isset($upload['size']) ? $upload['size'] : null);
+		$filesize = intval($size);
+		$total_file_size = $filesize;	
+    }	
+	
+	if (getFreeSpace($id) < $total_file_size/1024) { // KB
+		$returnValue['result'] = $configure['results']['space_restriction']['message'];
+		$returnValue['result_code'] = $configure['results']['space_restriction']['code'];
+		return $returnValue;
+	}
+	
 
 	error_reporting(E_ALL | E_STRICT);
 

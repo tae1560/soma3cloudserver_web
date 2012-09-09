@@ -30,4 +30,7 @@ $configure['results']['conflict']['code'] = 409;
 $configure['results']['internal_error']['message'] = "Internal Server Error";
 $configure['results']['internal_error']['code'] = 500;
 
+$configure['results']['space_restriction']['message'] = "Space restriction";
+$configure['results']['space_restriction']['code'] = 406;
+
 ?>
