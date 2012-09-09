@@ -63,6 +63,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					url : 'api/management/get_data/index.php?category=lvm_state&response_object=json', //server script to process data
 					type : 'GET',
 					success : function(data) {
+						loadLvmTable(data);
 						loadLoadbalancingState(data);
 					},
 					error : function(data) {
@@ -75,6 +76,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					url : 'api/management/get_data/index.php?category=storage_state&response_object=json', //server script to process data
 					type : 'GET',
 					success : function(data) {
+						loadStorageTable(data);
 						loadBandwidthState(data);
 						loadStorageState(data);
 					},
@@ -88,6 +90,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					url : 'api/management/get_data/index.php?category=lvm_statistics&response_object=json', //server script to process data
 					type : 'GET',
 					success : function(data) {
+						//console.log(data);
 						loadLoadbalancingStatistics(data);
 					},
 					error : function(data) {
@@ -109,8 +112,18 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 				}); // end of ajax
 			}
 			
+			//////////// load current state table ////////////
+			function loadLvmTable(data) {
+				var json_data = json_parse(data);
+				//console.log(json_data);				
+			}
 			
-			//////////// current state //////////// 
+			function loadStorageTable(data) {
+				
+			}
+			
+			
+			//////////// load current state //////////// 
 			function loadLoadbalancingState(data) {
 				var json_data = json_parse(data);						
 				
@@ -208,7 +221,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 				});
 			}
 			
-			//////////// statistics ////////////
+			//////////// load statistics ////////////
 			function loadLoadbalancingStatistics(data) {
 				var json_data = json_parse(data);
 				
@@ -260,7 +273,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 						xaxis : {
 							renderer : $.jqplot.DateAxisRenderer,
 							//min : '2009/6/22 1:00',
-							tickInterval : "20 minutes",
+							tickInterval : "30 minutes",
 							tickOptions : {
 								formatString : "%H:%M"
 							}
@@ -395,7 +408,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 			}
 			function loadStorageStatistics(data) {
 				var json_data = json_parse(data);
-				console.log(json_data);
+				//console.log(json_data);
 				
 				var dataArray = new Array();
 				dataArray[0] = new Array();
@@ -450,14 +463,14 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					var newDate = $.format.date(averageDate, 'yyyy/MM/dd HH:mm:ss');
 					//console.log(newDate);
 					
-					array[0].push([newDate, sum_of_hdd_total]);
-					array[1].push([newDate, sum_of_hdd_use]);
+					array[0].push([newDate, sum_of_hdd_total / 1024]);
+					array[1].push([newDate, sum_of_hdd_use / 1024]);
 				}	
 				
 				//console.log(array);
 				
 				var plot = $.jqplot('chart_storage_statistics', array, {
-					title : 'Storage Usage Statistics (MB)',
+					title : 'Storage Usage Statistics (GB)',
 					series : [{
 						label : '하드 총용량',
 						neighborThreshold : -1
@@ -514,7 +527,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         <!-- State 출력 시작 -->
         <div id="state_div">
             <!-- LVM State 시작 -->
-            <table class="state_table">
+            <table id="lvm_state_table" class="state_table">
                 <caption>
                     LVM State
                 </caption>
@@ -548,7 +561,7 @@ $row = mysql_fetch_array($result);
             </table>
             <!-- LVM State 끝 -->
             <!-- Storage State 시작 -->
-            <table class="state_table">
+            <table id="storage_state_table" class="state_table">
                 <caption>
                     Storage State
                 </caption>
@@ -599,11 +612,11 @@ $row = mysql_fetch_array($result);
 			mysql_close($link);
         ?>
 
-        <div id="chart_lvm_state" class="chart"></div>
-        <div id="chart_bandwidth_state" class="chart"></div>
-        <div id="chart_storage_state" class="chart"></div>
-        <div id="chart_lvm_statistics" class="chart"></div>
-        <div id="chart_bandwidth_statistics" class="chart"></div>
-        <div id="chart_storage_statistics" class="chart"></div>
+        <div id="chart_lvm_state" class="state_chart"></div>
+        <div id="chart_bandwidth_state" class="state_chart"></div>
+        <div id="chart_storage_state" class="state_chart"></div>
+        <div id="chart_lvm_statistics" class="statistics_chart"></div>
+        <div id="chart_bandwidth_statistics" class="statistics_chart"></div>
+        <div id="chart_storage_statistics" class="statistics_chart"></div>
     </body>
 </html>

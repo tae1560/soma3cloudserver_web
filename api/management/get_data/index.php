@@ -19,16 +19,16 @@ $category = $_GET['category'];
 
 if ($category == "lvm_state") {
 	$select = mysql_select_db($configure['state_database_name']);
-	$query = "SELECT * FROM " . $configure['lvm_state_table_name'] . " ORDER BY 'index' DESC ;";
+	$query = "SELECT * FROM " . $configure['lvm_state_table_name'] . " ;";
 } else if ($category == "storage_state") {
 	$select = mysql_select_db($configure['state_database_name']);
-	$query = "SELECT * FROM " . $configure['storage_state_table_name'] . " ORDER BY 'index' DESC ;";
+	$query = "SELECT * FROM " . $configure['storage_state_table_name'] . " ;";
 } else if ($category == "lvm_statistics") {
 	$select = mysql_select_db($configure['statistics_database_name']);
-	$query = "SELECT * FROM " . $configure['lvm_statistics_table_name'] . " ORDER BY 'index' DESC LIMIT 0, 60;";
+	$query = "SELECT * FROM " . $configure['lvm_statistics_table_name'] . " ORDER BY `".$configure['lvm_statistics_table_name']."`.`index` DESC LIMIT 240;";
 } else if ($category == "storage_statistics") {
 	$select = mysql_select_db($configure['statistics_database_name']);
-	$query = "SELECT * FROM " . $configure['storage_statistics_table_name'] . " ORDER BY 'index' DESC LIMIT 0, 120;";
+	$query = "SELECT * FROM " . $configure['storage_statistics_table_name'] . " ORDER BY `".$configure['storage_statistics_table_name']."`.`index` DESC LIMIT 240;";
 } else {
 	echo "Wrong category";
 	exit;

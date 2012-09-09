@@ -41,8 +41,14 @@ table.state_table, table.state_table th, table.state_table td
 
 
 
-div.chart {
-    width: 46%;
+div.state_chart {
+    width: 28%;
+    float: left;
+    margin: 2%;
+    /*margin-top:20px; margin-left:20px; width:1000px; height:300px;*/
+}
+div.statistics_chart {
+    width: 96%;
     float: left;
     margin: 2%;
     /*margin-top:20px; margin-left:20px; width:1000px; height:300px;*/
