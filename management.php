@@ -361,8 +361,9 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 					var newDate = $.format.date(averageDate, 'yyyy/MM/dd HH:mm:ss');
 					//console.log(newDate);
 					
-					array[0].push([newDate, sum_of_rx_use]);
-					array[1].push([newDate, sum_of_tx_use]);
+					// per seconds
+					array[0].push([newDate, sum_of_rx_use / 300]); 
+					array[1].push([newDate, sum_of_tx_use / 300]);
 				}	
 				
 				//console.log(array);
@@ -391,7 +392,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 							// tickOptions : {
 								// formatString : '$%.2f'
 							// }
-							//min : -10,
+							min : 0,
 							//max : max_of_conn + 30
 						}
 					},
